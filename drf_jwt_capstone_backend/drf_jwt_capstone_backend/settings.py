@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'authentication.apps.AuthenticationConfig',
     'gifts.apps.GiftsConfig',
+    'comments.apps.CommentsConfig',
     'corsheaders',
 ]
 
