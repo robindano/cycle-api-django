@@ -6,6 +6,7 @@ class Gift(models.Model):
     giver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='gifts_given')
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='gifts_won')
     name = models.CharField(max_length=100)
+    image = models.ImageField(blank=True, null=True)
     description = models.CharField(max_length=500)
     category = models.CharField(max_length=30)
     condition = models.CharField(max_length=30)
