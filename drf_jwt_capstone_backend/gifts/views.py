@@ -5,7 +5,9 @@ from django.http.response import Http404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from .models import Gift
+from .tasks import pick_winner, print_expiration
 from .serializers import GiftSerializer
+import random
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -22,8 +24,12 @@ class GiftList(APIView):
         serializer = GiftSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            #celery task
+            print_expiration.apply_async(countdown=3)
+            pick_winner.apply_async((serializer.id), eta=serializer.expiration)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class GiftDetail(APIView):
 
@@ -49,6 +55,14 @@ class GiftDetail(APIView):
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    def patch(self, request, pk):
+        gift = self.get_object(pk)
+        serializer = GiftSerializer(gift, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         gift = self.get_object(pk)
