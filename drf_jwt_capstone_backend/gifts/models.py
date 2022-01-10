@@ -13,4 +13,4 @@ class Gift(models.Model):
     active = models.BooleanField(default=True)
     interested_users = models.ManyToManyField(User, blank=True, related_name='gifts_interested')
     created = models.DateTimeField(auto_now_add=True)
-    expiration = models.DateTimeField()
+    hours_active = models.IntegerField(blank=True, default=24)

@@ -9,11 +9,13 @@ from .tasks import pick_winner, print_expiration
 from .serializers import GiftSerializer
 from datetime import datetime, timedelta
 from django.utils import timezone
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class GiftList(APIView):
 
+    # parser_classes = (MultiPartParser, FormParser)
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -23,14 +25,16 @@ class GiftList(APIView):
 
     def post(self, request):
         serializer = GiftSerializer(data=request.data)
+        print(serializer)
         if serializer.is_valid():
             serializer.save()
-            print(serializer.data['expiration'])
-            # expiration = timezone.now() + timedelta(hours=1)
+            expiration = timezone.now() + timedelta(hours=serializer.data['hours_active'])
             # celery task
-            pick_winner.apply_async([serializer.data['id']], eta=serializer.data['expiration'])
+            pick_winner.apply_async([serializer.data['id']], eta=expiration)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print('error', serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GiftDetail(APIView):
