@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from .models import Gift
 from .tasks import pick_winner, print_expiration
-from .serializers import GiftSerializer
+from .serializers import GetGiftSerializer, AddGiftSerializer
 from datetime import datetime, timedelta
 from django.utils import timezone
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -20,12 +20,11 @@ class GiftList(APIView):
 
     def get(self, request):
         gifts = Gift.objects.filter(giver__city=request.user.city, giver__state=request.user.state)
-        serializer = GiftSerializer(gifts, many=True)
+        serializer = GetGiftSerializer(gifts, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = GiftSerializer(data=request.data)
-        print(serializer)
+        serializer = AddGiftSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             expiration = timezone.now() + timedelta(hours=serializer.data['hours_active'])
@@ -49,13 +48,13 @@ class GiftDetail(APIView):
 
     def get(self, request, pk):
         gift = self.get_object(pk)
-        serializer = GiftSerializer(gift)
+        serializer = GetGiftSerializer(gift)
         return Response(serializer.data)
 
     def put(self, request, pk):
         gift = self.get_object(pk)
         if gift.giver.id == request.user.id:
-            serializer = GiftSerializer(gift, data=request.data)
+            serializer = AddGiftSerializer(gift, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -64,7 +63,7 @@ class GiftDetail(APIView):
 
     def patch(self, request, pk):
         gift = self.get_object(pk)
-        serializer = GiftSerializer(gift, data=request.data, partial=True)
+        serializer = AddGiftSerializer(gift, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

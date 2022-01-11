@@ -112,7 +112,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         instance.city = validated_data['city']
         instance.state = validated_data['state']
         instance.zip_code = validated_data['zip_code']
-        instance.profile_pic = validated_data['profile_pic']
+
         
         instance.save()
 
