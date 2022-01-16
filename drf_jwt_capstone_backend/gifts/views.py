@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from .models import Gift
 from .tasks import pick_winner, print_expiration
-from .serializers import GetGiftSerializer, AddGiftSerializer
+from .serializers import GetGiftSerializer, AddGiftSerializer, UpdateGiftSerializer
 from datetime import datetime, timedelta
 from django.utils import timezone
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -55,8 +55,9 @@ class GiftDetail(APIView):
 
     def put(self, request, pk):
         gift = self.get_object(pk)
+        print(request.data)
         if gift.giver.id == request.user.id:
-            serializer = AddGiftSerializer(gift, data=request.data)
+            serializer = UpdateGiftSerializer(gift, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -65,7 +66,7 @@ class GiftDetail(APIView):
 
     def patch(self, request, pk):
         gift = self.get_object(pk)
-        serializer = AddGiftSerializer(gift, data=request.data, partial=True)
+        serializer = UpdateGiftSerializer(gift, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

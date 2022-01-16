@@ -14,3 +14,8 @@ class AddGiftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gift
         fields = ['id', 'giver', 'winner',  'name', 'description', 'category', 'condition', 'active', 'interested_users', 'created', 'image', 'hours_active']
+
+class UpdateGiftSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Gift
+        fields = [ 'winner',  'name', 'description', 'category', 'condition', 'interested_users', 'created', 'image', 'hours_active']
