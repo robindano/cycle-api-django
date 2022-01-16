@@ -15,7 +15,7 @@ User = get_user_model()
 
 class GiftList(APIView):
 
-    # parser_classes = (MultiPartParser, FormParser)
+    # parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -24,6 +24,8 @@ class GiftList(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        request.data.__setitem__('giver', request.user.id)
+        request.data.__setitem__('active', True)
         serializer = AddGiftSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -32,7 +34,7 @@ class GiftList(APIView):
             pick_winner.apply_async([serializer.data['id']], eta=expiration)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            print('error', serializer.errors)
+            print('error', serializer.errors, serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

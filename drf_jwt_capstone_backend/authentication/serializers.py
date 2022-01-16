@@ -16,7 +16,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'password', 'email',
-                  'first_name', 'last_name', 'street', 'city', 'state', 'zip_code', 'profile_pic', 'rating')
+                  'first_name', 'last_name', 'street', 'city', 'state', 'zip_code', 'profile_pic')
 
     def create(self, validated_data):
 
@@ -30,7 +30,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             state=validated_data['state'],
             zip_code=validated_data['zip_code'],
             profile_pic=validated_data['profile_pic'],
-            rating=validated_data['rating'],
         )
         user.set_password(validated_data['password'])
         user.save()
