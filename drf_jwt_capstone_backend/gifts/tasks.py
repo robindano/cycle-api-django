@@ -8,13 +8,12 @@ logger = get_task_logger(__name__)
 @shared_task(bind=True)
 def pick_winner(self, gift_id):
     gift = Gift.objects.get(id=gift_id)
-    winner = random.choice(list(gift.interested_users.all()))
-    gift.winner = winner
+    if gift.interested_users.length > 0:
+        winner = random.choice(list(gift.interested_users.all()))
+        gift.winner = winner
     gift.active = False
     gift.save()
-    logger.info('winner picked')
-    print(f'gift: {gift.id} winner: {winner.first_name}')
-    return winner.id
+
 
 @shared_task()
 def print_expiration():
