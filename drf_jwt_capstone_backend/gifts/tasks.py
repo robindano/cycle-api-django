@@ -8,8 +8,9 @@ logger = get_task_logger(__name__)
 @shared_task(bind=True)
 def pick_winner(self, gift_id):
     gift = Gift.objects.get(id=gift_id)
-    if gift.interested_users.length > 0:
-        winner = random.choice(list(gift.interested_users.all()))
+    interested_list = list(gift.interested_users.all())
+    if interested_list.length > 0:
+        winner = random.choice(interested_list)
         gift.winner = winner
     gift.active = False
     gift.save()
