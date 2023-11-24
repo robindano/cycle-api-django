@@ -2,7 +2,7 @@
 
 Cycle is a community building app where neighbors can exchange goods for free.
 
-This is the API, built with Django, using Django Rest Framework and Celery. This utilizes a MYSQL database, and Redis as a broker for Celery tasks. The [Frontend](https://github.com/joeylking/cycle) was built with React.
+This is the API, built with Django, using Django Rest Framework and Celery. This utilizes a MYSQL database, and Redis as a broker for Celery tasks. The [Frontend](https://github.com/robindano/cycle-react) was built with React.
 
 ## Project Features
 
